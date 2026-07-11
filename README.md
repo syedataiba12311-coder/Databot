@@ -37,6 +37,8 @@ This bot allows you to collect data from WhatsApp messages and append them to a 
    python app.py
    ```
 
+
+
 ## Usage
 - Text the bot: `Sold 5 shirts`
   - The bot will log: `Timestamp: <current time>`, `Sender: <your number>`, `Item: shirts`, `Quantity: 5`.
