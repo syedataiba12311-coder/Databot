@@ -1,47 +1,94 @@
-# WhatsApp Data Bot for Google Sheets
+# Databot — WhatsApp Data Bot for Google Sheets
 
-This bot allows you to collect data from WhatsApp messages and append them to a Google Sheet. It also includes functionality to generate a daily report.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) [![Python CI](https://github.com/syedataiba12311-coder/Databot/actions/workflows/python-ci.yml/badge.svg)](https://github.com/syedataiba12311-coder/Databot/actions)
 
-## Setup Instructions
+Databot lets businesses collect structured data from WhatsApp messages and store it in Google Sheets automatically. Send simple messages like "Sold 5 shirts" and the bot extracts the fields and appends them to a spreadsheet. It can also generate daily sales reports.
 
-### 1. Google Sheets Setup
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a new project or select an existing one.
-3. Enable the **Google Sheets API** and **Google Drive API**.
-4. Create **Service Account** credentials and download the JSON key file.
-5. Rename the downloaded JSON file to `service_account.json` and place it in this project folder (`C:\Users\User\Videos\Chatbot\WhatsAppBot\`).
-6. Create a new Google Sheet and share it with the email address found in your `service_account.json` (give it Editor access).
-7. Ensure your sheet has the following columns in the first row (Header): `Timestamp`, `Sender`, `Item`, `Quantity`.
-8. Copy the **Spreadsheet ID** from the sheet's URL (it's the long string of characters between `/d/` and `/edit`).
+## Demo
+- Live demo: (add your demo URL or a short GIF here)
+- Example interaction:
+  - You: `Sold 5 shirts`
+  - Bot: logs a row in Google Sheets with Timestamp, Sender, Item: `shirts`, Quantity: `5`
 
-### 2. Twilio WhatsApp Setup
-1. Create a [Twilio Account](https://www.twilio.com/).
-2. Activate your Twilio Sandbox for WhatsApp.
-3. Note your `Account SID` and `Auth Token` from the Twilio Console.
-4. Set up an ngrok server to expose your local Flask app to the internet (e.g., `ngrok http 5000`).
-5. Set the Twilio Sandbox webhook URL to `https://<your-ngrok-url>/bot`.
+## Features
+- Parse natural-language WhatsApp messages into structured rows (Timestamp, Sender, Item, Quantity)
+- Append entries to Google Sheets via the Sheets API
+- On-demand `report` command to get today's summary
+- Scheduled daily report to owner WhatsApp number
+- Easy to configure via environment variables
 
-### 3. Environment Variables
-1. Copy the `.env.example` file and rename it to `.env`.
-2. Fill in the `.env` file with your Twilio and Google Sheets details.
-   - For phone numbers, Make sure to include the `whatsapp:` prefix, e.g., `whatsapp:+923001234567`.
+## Tech stack
+- Backend: Python + Flask
+- Messaging: Twilio WhatsApp Sandbox
+- Data store: Google Sheets (via Google Sheets API and a Service Account)
+- Deployment: ngrok for local testing; recommended: Heroku / Railway / VPS for production
 
-### 4. Running the Bot
-1. Open a terminal in this directory.
-2. Install the required Python packages:
-   ```cmd
+## Quick start (local)
+1. Clone the repo
+   ```bash
+   git clone https://github.com/syedataiba12311-coder/Databot.git
+   cd Databot
+   ```
+2. (Recommended) create a virtual environment and activate it
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # macOS / Linux
+   venv\Scripts\activate     # Windows
+   ```
+3. Install dependencies
+   ```bash
    pip install -r requirements.txt
    ```
-3. Run the Flask application:
-   ```cmd
+4. Google Sheets setup
+   - Enable Google Sheets API and Google Drive API in Google Cloud Console
+   - Create a Service Account, download the JSON key, rename it to `service_account.json` and place it in the project root
+   - Share the target Google Sheet with the service account email (Editor)
+   - Ensure the sheet's header row contains: `Timestamp`, `Sender`, `Item`, `Quantity`
+   - Copy the Spreadsheet ID (from the sheet URL)
+
+5. Twilio WhatsApp setup
+   - Create a Twilio account and enable the WhatsApp sandbox
+   - Note your Account SID and Auth Token
+   - Run ngrok to expose your local Flask server during development: `ngrok http 5000`
+   - Set Twilio Sandbox webhook to `https://<your-ngrok-url>/bot`
+
+6. Environment variables
+   - Copy `.env.example` to `.env` and fill values:
+     - TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+     - SPREADSHEET_ID
+     - OWNER_WHATSAPP_NUMBER (e.g. `whatsapp:+92300XXXXXXX`)
+     - Any other keys listed in `.env.example`
+
+7. Run the app
+   ```bash
    python app.py
    ```
 
-
-
 ## Usage
-- Text the bot: `Sold 5 shirts`
-  - The bot will log: `Timestamp: <current time>`, `Sender: <your number>`, `Item: shirts`, `Quantity: 5`.
-- Text the bot: `report`
-  - The bot will instantly return the sum of all items sold today.
-- The bot will also automatically send a daily report every day at 20:00 (8:00 PM) to the `OWNER_WHATSAPP_NUMBER`.
+- Send: `Sold 5 shirts` → a new row is appended with parsed Item and Quantity
+- Send: `report` → the bot returns the sum of today's items
+- The bot sends an automated daily report at 20:00 (8 PM) to the owner number
+
+## Configuration
+- Update `service_account.json` and `.env` with your credentials
+- To run in production, host the Flask app on a public server and update Twilio webhook
+
+## Contributing
+Contributions are welcome! Suggested ways to help:
+- Improve message parsing & edge-case handling
+- Add tests and CI checks
+- Add deployment guides for Heroku / Railway
+- Open issues for bugs or feature requests
+
+## Roadmap / Improvements
+- Add more robust NLP for varied message formats
+- Add multi-item message parsing
+- Add user authentication & role-based access for reports
+- Add unit tests and integration tests
+
+## License
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+
+---
+
+If you'd like, I can add screenshots, a GIF demo, and an architecture diagram — provide the images or let me generate a simple GIF from a demo run and I'll include it.
